@@ -1,0 +1,24 @@
+<html>
+	<head>
+		<script src="socket.io.js"></script>
+		<script src="https://code.jquery.com/jquery-1.11.3.js"></script>
+		<script language="javascript">
+			var socket = io.connect("http://localhost:9595");
+			
+			function new_mission(title){
+				socket.emit('new mission', {name: title});
+			}
+			
+			$(document).ready(function(){
+				$("#btnNew").bind("click", function(){
+					new_mission($("#txtNew").val());
+					$("#txtNew").val("");
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<input id="txtNew" />
+		<button id="btnNew">New mission</button>
+	</body>
+</html>
