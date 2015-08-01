@@ -12,6 +12,8 @@ function makingAMistake(socket, evt, message){
 		reason: message
 	});
 }
+words = require("./words.js");
+words.init();
 
 
 io.sockets.on('connection', function(socket){
@@ -58,7 +60,9 @@ io.sockets.on('connection', function(socket){
 			tmp = new Array();
 			for (var i in missions) {
 				if(missions[i].hasUser(e.user_id)){
-					tmp.push(missions[i].getMetaData());
+					var m = missions[i].getMetaData();
+					m.owner = users[m.owner].getMetaData()
+					tmp.push(m);
 				}
 			}
 			socket.emit('get mission success', {
@@ -68,13 +72,13 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('new mission', function(e){
-		if(!e || !e.name || !e.owner_id){
+		if(!e || !e.type || !e.minUsers || !e.words){
 			makingAMistake(socket, "new mission");
 		}else{
 			console.log("new mission success");
-			var misson = new Mission(e.name);
+			var misson = new Mission(type,owner,minUsers,words);
 			missions[mission.id] = mission;
-			var usr = users[e.owner_id];;
+			var usr = users[e.owner];;
 			mission.addUser(usr);
 			console.log("number of users " +  users.length);
 			for (var i in users){
@@ -132,12 +136,15 @@ io.sockets.on('connection', function(socket){
 		if(e && e.noOfWord){
 			noOfWord = e.noOfWord;
 		}
-		words = require('./words.js');
+		var words = require('./words.js');
 		var rs = [];
-		rs = rs.concat(words.get('easy',1));
-		rs = rs.concat(words.get('normal',3));
-		rs = rs.concat(words.get('hard',1));
-		return rs;
+		rs = rs.concat(words.get('easy',parseInt(noOfWord*0.2)));
+		rs = rs.concat(words.get('normal',parseInt(noOfWord*0.6)));
+		rs = rs.concat(words.get('hard',noOfWord - parseInt(noOfWord*0.2) - parseInt(noOfWord*0.6)));
+		console.log(noOfWord," ",rs);
+		socket.emit('generate words success', {
+			"words" : rs
+		});
 	});
 
 	socket.on('disconnect', function(){

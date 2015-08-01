@@ -6,7 +6,7 @@
 			var socket = io.connect("http://localhost:9595");
 			
 			function new_mission(title){
-				socket.emit('new mission', {name: title});
+				socket.emit('generate words', {name: title});
 			}
 			
 			$(document).ready(function(){
