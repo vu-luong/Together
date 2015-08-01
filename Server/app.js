@@ -20,18 +20,23 @@ io.sockets.on('connection', function(socket){
 	console.log(socket.id + " connected");
 	socket.on('login', function(e){
 		// console.log("on login");
-		console.log(e.id, e.name);
 		if(!e || !e.name || !e.id){
 			makingAMistake(socket, "login");
 		} else if (users[e.id] != undefined) {
+			/*
+			* login
+			*/
 			users[e.id].socket = socket;
 			socket.emit("login success", {
 				id : e.id
 			});
 		} else {
-			var user = new User(e.id, e.name, socket);
+			/*
+			* register
+			*/
+			var user = User(e.id, e.name, e.avatar, socket);
 			users[e.id] = user;
-			console.log(e.id + " " + e.name);
+			console.log("line34: ",e.id + " " + e.name + " "+socket.id);
 			var tmp = new Array();
 			console.log("user registered: "+user.getMetaData().id+", "+user.getMetaData().name);
 			socket.emit("login success", {
@@ -61,7 +66,8 @@ io.sockets.on('connection', function(socket){
 			for (var i in missions) {
 				if(missions[i].hasUser(e.user_id)){
 					var m = missions[i].getMetaData();
-					m.owner = users[m.owner].getMetaData()
+					var mdata = users[m.owner_id].getMetaData();
+					m.owner_name = mdata.name;
 					tmp.push(m);
 				}
 			}
@@ -72,62 +78,60 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('new mission', function(e){
-		if(!e || !e.type || !e.minUsers || !e.words){
+		if(!e || !e.type || !e.ownerId || !e.minUsers || !e.words){
 			makingAMistake(socket, "new mission");
 		}else{
 			console.log("new mission success");
-			var misson = new Mission(type,owner,minUsers,words);
+			var mission = Mission(e.type,e.ownerId,e.minUsers,e.words);
+			console.log(mission);
 			missions[mission.id] = mission;
-			var usr = users[e.owner];;
+			var usr = users[e.ownerId];
 			mission.addUser(usr);
-			console.log("number of users " +  users.length);
 			for (var i in users){
 				var s = users[i].socket;
 				s.emit("new mission success", {
 					id: mission.id,
-					name: mission.name,
-					user: users[i].getMetaData()
+					type : mission.type,
+					owner_id : e.ownerId,
+					owner_name : usr.name
 				});
 			}
 		}
 	});
 
 	socket.on('join mission', function(e){
-
-		if(!e || !e.user_id){
+		if(!e || !e.user_id || !e.mission_id){
 			makingAMistake(socket, "join mission");
 		}else{
-			console.log(e.user_id + " entered room " + e.room_id);
-			var room = rooms[e.room_id];
-			room.addUserById(e.user_id);
-			socket.emit("join room success", {
-				id: room.id
+			console.log(e.user_id + " entered mission " + e.mission_id);
+			var mission = missions[e.mission_id];
+			var user = users[e.user_id]
+			mission.addUser(user);
+			socket.emit("join mission success", {
+				id: mission.id,
+				user : user.id
 			});
 		}
 	});
-	socket.on('leave mission', function(e){
-
-	});
+	
 	socket.on('chat', function(e){
-		if(!e || !e.room_id || !e.user_id || !e.type || !e.message){
-			makingAMistake(socket, "chat");
+		if(!e || !e.mission_id || !e.user_id || !e.type || !e.message){
+			makingAMistake(socket, 'chat');
 		}else{
-			var room = rooms[e.room_id];
+			var mission = missions[e.room_id];
 			var user_name = users[e.user_id].name;
-
-			for (var i in room.userRoom) {
-
-				var s = room.userRoom[i].socket;
-				s.emit("chat", {
-					message : e.message,
-					type : e.type,
-					url : e.url,
-					name: user_name,
-					user_id : e.user_id,
-					room_id : e.room_id
-				})
+			var msg = {
+				message : e.message,
+				type : e.type,
+				name: user_name,
+				user_id : e.user_id
+			};
+			mission.addChatlog(msg);
+			msg.mission_id = e.mission_id;
+			for (var i in mission.users) {
+				var s = mission.users[i].socket;
+				s.emit('chat success', msg);
 			}
-
 		}
 	});
 
@@ -149,7 +153,32 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('disconnect', function(){
 		console.log(socket.id+" disconnect");
+		for(var id in users){
+			users[id].socket = undefined;
+		}
+	});
+
+	socket.on('get all missions', function(){
+		var tmp = [];
+		for(var i in missions){
+			tmp.push(missions[i].getMetaData());
+		}
+		socket.emit('get all missions success', {
+			missions : tmp
+		});
+	});
+
+	socket.on('get chatlog', function(e){
+		if(!e || !e.mission_id){
+			makingAMistake(socket, "get chat log")
+		}
+		var mission = missions[e.mission_id];
+		socket.emit('get chat log success', {
+			chatlog: mission.getChatLog(),
+			metadata: mission.getMetaData()
+		});
 	});
 });
+
 
 console.log("Hello, chatserver is listening on port 9595");

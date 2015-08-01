@@ -40,9 +40,9 @@ function init(){
 function getFromStack(stack, howmany){
 	var rs = [];
 	for(var i=0;i<howmany;i++){
-		var txt = stack[parseInt(Math.random()*stack.length)];
+		var txt = stack[parseInt(Math.random()*(stack.length-1))];
 		while(rs.indexOf(txt) != -1){
-			txt = stack[parseInt(Math.random()*stack.length)];
+			txt = stack[parseInt(Math.random()*(stack.length-1))];
 		}
 		rs.push(txt);
 	}
