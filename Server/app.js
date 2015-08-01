@@ -49,10 +49,10 @@ io.sockets.on('connection', function(socket){
 		if (!e || !e.id) {
 			makingAMistake(socket, "relogin");
 		} else {
-			console.log("somebody reconnecting");
+			//console.log(socket.id+" somebody reconnecting");somebod
 			if (users[e.id] != undefined) {
 				users[e.id].socket = socket;
-				console.log("reconnected");
+				// console.log("reconnected");
 			}
 		}
 	});
@@ -83,18 +83,24 @@ io.sockets.on('connection', function(socket){
 		}else{
 			console.log("new mission success");
 			var mission = Mission(e.type,e.ownerId,e.minUsers,e.words);
-			console.log(mission);
 			missions[mission.id] = mission;
 			var usr = users[e.ownerId];
 			mission.addUser(usr);
+			var l = 0;
+			for (var i in users){
+				console.log("users["+i+"]:"+users[i].id+", "+users[i].name);
+				l++;
+			}
+			console.log("users.length: "+l);
 			for (var i in users){
 				var s = users[i].socket;
-				s.emit("new mission success", {
-					id: mission.id,
-					type : mission.type,
-					owner_id : e.ownerId,
-					owner_name : usr.name
-				});
+				if(s == undefined){
+					console.log("socket is null ", users[i].getMetaData());
+
+				}else{
+					s.emit("new mission success", mission.getMetaData());
+					s.emit("mission created", mission.getMetaData());	
+				}
 			}
 		}
 	});
@@ -106,11 +112,45 @@ io.sockets.on('connection', function(socket){
 			console.log(e.user_id + " entered mission " + e.mission_id);
 			var mission = missions[e.mission_id];
 			var user = users[e.user_id]
-			mission.addUser(user);
+			if(mission.addUser(user)){
+				var mUsers = mission.users;
+				for(var usrId in mUsers){
+					var usr = mUsers[usrId];
+					if(usr != user){
+						if(usr.socket){
+							console.log("log log asldjaldjaklsdjldjlkasjdksaj");
+							usr.socket.emit('people join mission', {
+								mission_id : mission.id,
+								newly_joined_id : user.id,
+								newly_joined_name : user.name,
+								newly_joined_avatar : user.avatar
+							});
+						}else{
+							/* TODO: offline, do something */
+							console.log(usr.id+" is offline");
+						}
+					}
+				}
+			}
+			/*
 			socket.emit("join mission success", {
 				id: mission.id,
 				user : user.id
 			});
+			*/
+
+			if(mission.isStartable()){
+				mission.started = true;
+				for(var usr in mUsers){
+					if(usr.socket){
+						usr.socket.emit('mission start', {
+							mission_id : mission.id
+						});
+					}else{
+						/* TODO: offline, do something */
+					}
+				}
+			}
 		}
 	});
 	
@@ -120,17 +160,20 @@ io.sockets.on('connection', function(socket){
 		}else{
 			var mission = missions[e.room_id];
 			var user_name = users[e.user_id].name;
+			var user_avatar = users[e.user_id].avatar;
 			var msg = {
 				message : e.message,
+				url: e.url,
 				type : e.type,
 				name: user_name,
-				user_id : e.user_id
+				user_id : e.user_id,
+				user_avatar : user_avatar
 			};
 			mission.addChatlog(msg);
 			msg.mission_id = e.mission_id;
 			for (var i in mission.users) {
 				var s = mission.users[i].socket;
-				s.emit('chat success', msg);
+				s.emit('chat', msg);
 			}
 		}
 	});
@@ -168,12 +211,12 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
-	socket.on('get chatlog', function(e){
+	socket.on('get misionlog', function(e){
 		if(!e || !e.mission_id){
-			makingAMistake(socket, "get chat log")
+			makingAMistake(socket, "get missionlog")
 		}
 		var mission = missions[e.mission_id];
-		socket.emit('get chat log success', {
+		socket.emit('get missionlog success', {
 			chatlog: mission.getChatLog(),
 			metadata: mission.getMetaData()
 		});

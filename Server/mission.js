@@ -14,8 +14,11 @@ function Mission(type,owner,minUsers,words){
 	this.owner = owner; // id
 	this.minUsers = minUsers;
 	this.words = words;
+	this.numUsers = 0;
 
-	this.users = new Array();
+	this.started = false;
+
+	this.users = {};
 	this.missionlog = new Array();
 	var _self = this;
 
@@ -25,6 +28,7 @@ function Mission(type,owner,minUsers,words){
 			return false;
 		}
 		_self.users[usr.id] = usr;
+		_self.numUsers ++;
 		return true;
 	}
 	this.removeUserById = function(id){
@@ -38,23 +42,38 @@ function Mission(type,owner,minUsers,words){
 		return {
 			id : _self.id,
 			type: _self.type,
-			minUsers: _self.minUsers,
+			minUsers: _self.minUsers, // min number of users to start
 			words: _self.words,
 			owner_id: _self.owner,
-			owner_name: _self.users[_self.owner].name
+			owner_name: _self.users[_self.owner].name,
+			numUsers: _self.numUsers
 		}
 	}
 	this.getChatLog = function(){
 		return this.missionlog;
 	}
 	/*
-		message : e.message,
-		type : e.type,
-		name: user_name,
-		user_id : e.user_id
+		message
+		type
+		name
+		user_id
+		user_avatar
 	*/
 	this.addChatlog = function(msg){
 		_self.chatlog.push(msg);
+	}
+
+	this.isStartable = function(){
+		if(_self.started) return false;
+		var l=0;
+		for(var i in _self.users){
+			l++;
+		}
+		if(l >= _self.minUsers){
+			return true;
+		}else{
+			return false;
+		}
 	}
 
 	console.log("defined");
