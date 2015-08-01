@@ -8,9 +8,10 @@ function newMissionId(){
 	return mission_id;
 }
 
-function Mission(name){
+function Mission(name,type){
 	this.id = newMissionId();
 	this.name = name;
+	this.type = type;
 	this.users = new Array();
 	this.missionlog = new Array();
 	var _self = this;
@@ -25,5 +26,16 @@ function Mission(name){
 	}
 	this.removeUserById = function(id){
 		delete userRoom[id];
+	}
+	this.hasUser = function(id){
+		if(_self.users[id] != undefined) return true;
+		else return false;
+	}
+	this.getMetaData = function(){
+		return {
+			id : _self.id,
+			name : _self.name,
+			avatar: _self.type
+		}
 	}
 }
