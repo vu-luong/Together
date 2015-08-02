@@ -68,6 +68,13 @@ io.sockets.on('connection', function(socket){
 					var m = missions[i].getMetaData();
 					var mdata = users[m.owner_id].getMetaData();
 					m.owner_name = mdata.name;
+					m.joined = true;
+					tmp.push(m);
+				}else if(missions[i].hasPending(e.user_id)){
+					var m = missions[i].getMetaData();
+					var mdata = users[m.owner_id].getMetaData();
+					m.owner_name = mdata.name;
+					m.joined = false;
 					tmp.push(m);
 				}
 			}
@@ -171,22 +178,42 @@ io.sockets.on('connection', function(socket){
 			};
 			console.log('msg: '+e.message);
 			mission.addMissionlog(msg);
-			for (var i in mission.users) {
-				var s = mission.users[i].socket;
-				if(s){
-					msg.mission_id = e.mission_id;
-					s.emit('chat', msg);
+			if(e.type == 100){
+				for (var i in mission.users) {
+					var s = mission.users[i].socket;
+					if(s){
+						msg.mission_id = e.mission_id;
+						var correct = false;
+						if(e.message == mission.getCurrentWord()){
+							correct = true;
+						}
+						msg.correct = correct;
+						s.emit('chat', msg);
+					}
+				}
+			}else{
+				for (var i in mission.users) {
+					var s = mission.users[i].socket;
+					if(s){
+						msg.mission_id = e.mission_id;
+						s.emit('chat', msg);
+					}
 				}
 			}
+			
 
 			if(e.type == 100){ /* this is an answer */
-				mission.moveOn(e.user_id);
+				mission.moveOn(e.user_id, e.message);
 				for(var i in mission.users){
 					var usr = mission.users[i];
 					if(usr.socket){
+						var w = 0;
+						for(var k in mission.currentAnswered_currentWord){
+							if(mission.currentAnswered_currentWord[k] > 0) w++;
+						}
 						usr.socket.emit('get current word success', {
 							word: mission.getCurrentWord(),
-							currentAnswered : mission.currentAnswered_currentWord,
+							currentAnswered : w,
 							numUsers: mission.numUsers
 						});
 					}else{
@@ -208,8 +235,22 @@ io.sockets.on('connection', function(socket){
 					for(var usrIdx in mission.users){
 						var usr = mission.users[usrIdx];
 						if(usr.socket){
+							var _result = mission.result;
+							var final_result = {};
+							for(var i in _result){
+								final_result[i] = {
+									"point": 0,
+									"user_id" : i,
+									"user_name" : mission.users[i].name,
+									"user_avatar" : mission.users[i].avatar
+								};
+								for(var j in _result[i]){
+									final_result[i].point += _result[i][j];
+								}
+							}
 							usr.socket.emit('mission finished', {
-								words: mission.words
+								words: mission.words,
+								result: final_result
 							});
 						}
 					}
@@ -271,13 +312,38 @@ io.sockets.on('connection', function(socket){
 			makingAMistake(socket, "get word");
 		}else{
 			var mission = missions[e.mission_id];
+			var w = 0;
+			for(var i in mission.currentAnswered_currentWord){
+				if(mission.currentAnswered_currentWord[i] > 0) w++;
+			}
 			socket.emit('get current word success', {
 				word: mission.getCurrentWord(),
-				currentAnswered : mission.currentAnswered_currentWord,
+				currentAnswered : w,
 				numUsers: mission.numUsers
 			});
 		}
 	});
+
+	socket.on('invite', function(e){
+		if(!e || !e.from_user_id || !e.to_user_id || !e.mission_id){
+			makingAMistake(socket, "invite");
+		}else{
+			var from_user = users[e.from_user_id];
+			var to_user = users[e.to_user_id];
+			var mission = missions[e.mission_id];
+
+			if(to_user.socket){
+				to_user.socket.emit('invited', {
+					from_user_name : from_user.name,
+					from_user_avatar : from_user.avatar,
+					mission_id : e.mission_id
+				});
+				mission.addToPending(to_user);
+			}else{
+				/* offline */
+			}
+		}
+	})
 });
 
 

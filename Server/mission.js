@@ -17,10 +17,12 @@ function Mission(type,owner,minUsers,words){
 	this.numUsers = 0;
 	this.currentWordIdx = 0;
 	this.currentAnswered_currentWord = {};
+	this.result = {};
 
 	this.started = false;
 
 	this.users = {};
+	this.pending = {};
 	this.missionlog = new Array();
 	var _self = this;
 
@@ -32,6 +34,18 @@ function Mission(type,owner,minUsers,words){
 		_self.users[usr.id] = usr;
 		_self.numUsers ++;
 		_self.currentAnswered_currentWord[usr.id] = 0;
+		_self.result[usr.id] = {};
+		if(_self.hasPending(usr.id)){
+			delete _self.pending[usr.id];
+		}
+		return true;
+	}
+	this.addToPending = function(usr){
+		if (_self.users[usr.id] != undefined || _self.pending[usr.id] != undefined) {
+			console.log(_self.users[usr.id].name + " already in mission or already in pending");
+			return false;
+		}
+		_self.pending[usr.id] = usr;
 		return true;
 	}
 	this.removeUserById = function(id){
@@ -41,6 +55,10 @@ function Mission(type,owner,minUsers,words){
 	this.hasUser = function(id){
 		if(_self.users[id] != undefined) return true;
 		else return false;
+	}
+	this.hasPending = function(id){
+		if(_self.pending[id] != undefined) return true;
+		else return false;	
 	}
 	this.getMetaData = function(){
 		return {
@@ -104,9 +122,10 @@ function Mission(type,owner,minUsers,words){
 		return cdt;
 	}
 
-	this.moveOn = function(id){
-		if(_self.currentAnswered_currentWord[id] <= 3){
-
+	this.moveOn = function(id, answer){
+		if(_self.currentAnswered_currentWord[id] > 3){
+			if(answer == _self.getCurrentWord())
+				_self.result[id][_self.getCurrentWord()] = 10;
 		}else{
 			_self.currentAnswered_currentWord[id] ++;
 		}
@@ -117,7 +136,7 @@ function Mission(type,owner,minUsers,words){
 	}
 
 	this.isFinished = function(){
-		if((_self.currentWordIdx == (_self.words.length-1)) && (_self.readyNextRound()){
+		if( (_self.currentWordIdx == (_self.words.length-1) ) && _self.readyNextRound()){
 			return true;
 		}
 		return false;
