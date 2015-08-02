@@ -1,0 +1,123 @@
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <RelativeLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/footer" >
+        </RelativeLayout>
+
+        <ImageButton
+            android:id="@+id/createButton"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="56dp"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/btn_new_mission" />
+
+        <LinearLayout
+            android:id="@id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_above="@+id/line"
+            android:orientation="horizontal"
+            android:weightSum="2" >
+
+            <RelativeLayout
+                android:id="@+id/my_mission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="0.1dp"
+                android:layout_weight="1"
+                android:onClick="onMissionTabClick"
+                android:background="@drawable/tab1" >
+
+                <ImageButton
+                    android:id="@+id/iconExecuting"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="30dp"
+                    android:clickable="false"
+                    android:onClick="onMissionTabClick"
+                    android:background="@drawable/ico_my_mission" />
+
+                <TextView
+                    android:id="@+id/executingText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:onClick="onMissionTabClick"
+                    android:clickable="false"
+                    android:layout_toRightOf="@id/iconExecuting"
+                    android:text="My Mission"
+                    android:textColor="#ffffff"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/browse_mission"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/tab2"
+                android:onClick="onBrowseTabClick"
+                android:text="Browse" >
+
+                <ImageButton
+                    android:id="@+id/iconBrowse"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:onClick="onBrowseTabClick"
+                    android:layout_marginLeft="19dp"
+                    android:background="@drawable/ico_browser_mission" />
+
+                <TextView
+                    android:id="@+id/tittle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_toRightOf="@id/iconBrowse"
+                    android:onClick="onBrowseTabClick"
+                    android:text="Browse Mission"
+                    android:textColor="#ffffff"
+                    android:textSize="15sp" />
+            </RelativeLayout>
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignParentBottom="true"
+            android:background="@drawable/line" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/left_drawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start" >
+    </RelativeLayout>
+
+</android.support.v4.widget.DrawerLayout>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.together"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <RelativeLayout
+        android:id="@+id/wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp" >
+	
+        <ImageView 
+            android:id="@+id/rankIcon"
+            android:layout_width="30dp"
+            android:layout_height="40dp"
+            android:background="@drawable/ico_rank1"
+            android:layout_marginLeft="10dp"
+            android:layout_centerVertical="true"/>
+        
+        
+        <com.together.view.ui.CircularImageView
+            android:id="@+id/icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_toRightOf="@id/rankIcon"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/download"
+            app:border="true"
+            android:layout_centerVertical="true"
+            app:border_color="@color/GrayLight"
+            app:border_width="1dp"/>
+
+        <TextView
+            android:id="@+id/nameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/icon"
+            android:text="Vu Luong Anh"
+            android:textColor="#445a67"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:textSize="18sp" />
+        
+        <ImageView 
+            android:id="@+id/clapIcon"
+            android:layout_width="40dp"
+            android:layout_height="37dp"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ico_clap"/>
+        
+        <TextView 
+            android:id="@+id/numClap"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/clapIcon"
+            android:text="100"
+            android:textSize="15sp"
+            android:textColor="#f5789a"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="5dp"/>
+        
+    </RelativeLayout>
+
+</LinearLayout>

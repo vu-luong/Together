@@ -1,0 +1,110 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.together.view.activity.MainActivity" >
+	
+    
+    <TextView
+        android:id="@+id/missionType"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Grammar Mission" 
+        android:layout_marginTop="10dp"
+        android:textColor="#f5789a"
+        android:textSize="20sp"
+		android:layout_alignParentTop="true"/>
+    
+    <ImageView
+        android:id="@+id/missionTypeIcon"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_toLeftOf="@id/missionType"
+        android:layout_alignTop="@+id/missionType"
+        android:layout_marginLeft="32dp"
+        android:src="@drawable/ico_prono" />
+    
+    <com.together.view.ui.CompletionView
+        android:id="@+id/wordView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/missionType"
+        android:layout_marginTop="15dp"
+        android:focusableInTouchMode="true"
+        android:hint="Enter your words..."
+        android:imeOptions="actionDone"
+        android:inputType="text|textNoSuggestions|textMultiLine"
+        android:nextFocusDown="@+id/editText"
+        android:background="@drawable/r_edittext"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:padding="5dp"
+        android:textSize="19sp" 
+        android:textColor="#445a67"/>
+
+    <TextView
+        android:id="@+id/memberText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/wordView"
+        android:layout_above="@+id/dateText"
+        android:layout_marginBottom="30dp"
+        android:text="Member to start: "
+        android:textSize="20sp" />
+
+    <Spinner
+        android:layout_alignTop="@id/memberText"
+        android:id="@+id/planets_spinner"
+        android:layout_width="50dp"
+        android:layout_marginTop="-17dp"
+        android:layout_height="50dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"/>
+    
+    <TextView
+        android:id="@+id/dateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/createTopicButton"
+        android:layout_alignLeft="@id/wordView"
+        android:layout_marginBottom="60dp"
+        android:text="Accept to join: "
+        android:textSize="20sp" />
+    
+    <TextView 
+        android:id="@+id/datePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/createTopicButton"
+        android:layout_marginBottom="55dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:text="10/05/2015"
+        android:textSize="20sp"
+        android:padding="5dp"
+        android:background="@drawable/r_edittext"/>
+    
+    <TextView 
+        android:id="@+id/textNote"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+        android:textSize="10sp"
+        android:layout_marginBottom="10dp"
+        android:text="Note: The mission will be completed automatically after a day from the last person completed his task."/>
+    
+    
+    <ImageButton 
+        android:id="@+id/createTopicButton"
+        android:layout_width="138dp"
+        android:layout_height="40dp"
+        android:background="@drawable/btn_create_topic_hou"
+        android:layout_above="@id/textNote"
+        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"/>
+
+</RelativeLayout>
