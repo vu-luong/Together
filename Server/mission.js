@@ -80,8 +80,12 @@ function Mission(type,owner,minUsers,words){
 		name
 		user_id
 		user_avatar
+
+		id
+		clap
 	*/
 	this.addMissionlog = function(msg){
+		msg.clap = 0;
 		_self.missionlog.push(msg);
 	}
 
@@ -140,6 +144,10 @@ function Mission(type,owner,minUsers,words){
 			return true;
 		}
 		return false;
+	}
+
+	this.clap = function(log_idx){
+		_self.missionlog[log_idx].clap ++;
 	}
 
 	return this;
