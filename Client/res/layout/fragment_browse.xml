@@ -1,0 +1,69 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.together.view.activity.MainActivity" 
+    android:background="#ffffff">
+
+    <FrameLayout
+        android:id="@+id/actionBar"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:background="#65a1e7" >
+    </FrameLayout>
+
+    <ImageButton
+        android:id="@+id/menuButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="7dp"
+        android:layout_marginTop="5dp"
+        android:onClick="openNavigation"
+        android:background="@drawable/btn_menu" />
+
+    <ImageButton
+        android:id="@+id/searchButton"
+        android:layout_width="33dp"
+        android:layout_height="33dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/btn_search" />
+
+    <TextView
+        android:id="@+id/tittle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="7dp"
+        android:text="Browse Mission"
+        android:textColor="#ffffff"
+        android:visibility="visible"
+        android:textSize="22sp" />
+	
+     <EditText
+        android:id="@+id/searchEdit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Enter mission name..."
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="7dp"
+        android:visibility="invisible"
+        android:textColor="#ffffff"
+        android:textColorHint="#cccccc"
+        android:layout_centerHorizontal="true">
+        <requestFocus />
+    </EditText>
+    
+    <ListView
+        android:id="@+id/browseList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/createButton"
+        android:layout_below="@+id/actionBar"
+        android:layout_centerHorizontal="true"
+        android:background="#ffffff">
+    </ListView>
+
+</RelativeLayout>

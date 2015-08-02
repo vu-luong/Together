@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res/com.together.multiplyfragmentdemo"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content" >
+
+    <RelativeLayout
+        android:id="@+id/wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:background="#ffffff"
+        android:paddingBottom="5dp"
+        android:paddingTop="5dp" >
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/ico_prono_browser_mission" />
+
+        <TextView
+            android:id="@+id/itemTittle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/icon"
+            android:text="Pronouce Words"
+            android:textColor="#65a1e7"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/createByText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/itemTittle"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/icon"
+            android:text="Create By: "
+            android:textColor="#4c626d"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/nameText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/itemTittle"
+            android:layout_toRightOf="@id/createByText"
+            android:text="Vu Luong Anh"
+            android:textColor="#f4789c"
+            android:textSize="15sp" />
+
+        <ProgressBar
+            android:id="@+id/progressBar1"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/nameText"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="6dp"
+            android:layout_toRightOf="@id/icon"
+            android:progress="40" />
+
+        <ImageView
+            android:id="@+id/peopleIcon"
+            android:layout_width="30dp"
+            android:layout_height="22dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:background="@drawable/ico_group_pepole" />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp">
+
+            <TextView
+                android:id="@+id/idcText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ID: "
+                android:textColor="#4c626d"
+                android:textSize="15sp" />
+            
+             <TextView
+                android:id="@+id/idText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="20"
+                android:layout_toRightOf="@id/idcText"
+                android:textColor="#f4789c"
+                android:textSize="15sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentBottom="true">
+
+            <TextView
+                android:id="@+id/numcText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3/"
+                android:textColor="#f4789c"
+                android:textSize="15sp" />
+            
+             <TextView
+                android:id="@+id/numText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5"
+                android:layout_toRightOf="@id/numcText"
+                android:textColor="#4c626d"
+                android:textSize="15sp" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+</LinearLayout>
