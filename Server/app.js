@@ -55,6 +55,10 @@ io.sockets.on('connection', function(socket){
 				console.log("reconnected");
 			}
 		}
+
+		socket.emit("login success", {
+			id : e.id
+		})
 	});
 
 	socket.on('get mission', function(e){
@@ -229,7 +233,8 @@ io.sockets.on('connection', function(socket){
 							});
 						}
 					}
-				}else if(mission.isFinished()){
+				}
+				if(mission.isFinished()){
 					/* tell all user that this mission is finished */
 					for(var usrIdx in mission.users){
 						var usr = mission.users[usrIdx];
@@ -345,7 +350,7 @@ io.sockets.on('connection', function(socket){
 	});
 
 	socket.on('clap', function(e){
-		if(!e  || !e.mission_id || !e.log_idx){
+		if(!e  || !e.mission_id){
 			makingAMistake(socket, "invite");
 		}else{
 			var mission = missions[e.mission_id];

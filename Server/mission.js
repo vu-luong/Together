@@ -20,6 +20,7 @@ function Mission(type,owner,minUsers,words){
 	this.result = {};
 
 	this.started = false;
+	this.finished = false;
 
 	this.users = {};
 	this.pending = {};
@@ -68,7 +69,8 @@ function Mission(type,owner,minUsers,words){
 			words: _self.words,
 			owner_id: _self.owner,
 			owner_name: _self.users[_self.owner].name,
-			numUsers: _self.numUsers
+			numUsers: _self.numUsers,
+			finished: _self.finished
 		}
 	}
 	this.getMissionlog = function(){
@@ -111,7 +113,8 @@ function Mission(type,owner,minUsers,words){
 		for(var i in _self.users){
 			_self.currentAnswered_currentWord[i] = 0;
 		}
-		_self.currentWordIdx ++;
+		if(_self.currentWordIdx <= _self.words.length-1)
+			_self.currentWordIdx ++;
 		return _self.getCurrentWord();
 	}
 
@@ -128,19 +131,24 @@ function Mission(type,owner,minUsers,words){
 
 	this.moveOn = function(id, answer){
 		if(_self.currentAnswered_currentWord[id] > 3){
+		}else{
 			if(answer == _self.getCurrentWord())
 				_self.result[id][_self.getCurrentWord()] = 10;
-		}else{
+
 			_self.currentAnswered_currentWord[id] ++;
 		}
-		
-		if(_self.readyNextRound()){
+		console.log("move on:",_self.currentAnswered_currentWord);
+		if(_self.readyNextRound() && (_self.currentWordIdx < (_self.words.length-1) ) ){
 			_self.nextWord();
+		}else if(_self.readyNextRound() && (_self.currentWordIdx == (_self.words.length-1) ) ){
+			_self.finished = true;
 		}
 	}
 
 	this.isFinished = function(){
-		if( (_self.currentWordIdx == (_self.words.length-1) ) && _self.readyNextRound()){
+		console.log("_self.currentWordIdx: ",_self.currentWordIdx);
+		console.log("_self.readyNextRound(): ",_self.readyNextRound());
+		if( (_self.currentWordIdx >= (_self.words.length-1) ) && _self.readyNextRound()){
 			return true;
 		}
 		return false;
