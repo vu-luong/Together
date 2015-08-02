@@ -55,6 +55,10 @@ io.sockets.on('connection', function(socket){
 				console.log("reconnected");
 			}
 		}
+
+		socket.emit("login success", {
+			id : e.id
+		})
 	});
 
 	socket.on('get mission', function(e){
@@ -201,7 +205,6 @@ io.sockets.on('connection', function(socket){
 				}
 			}
 			
-
 			if(e.type == 100){ /* this is an answer */
 				mission.moveOn(e.user_id, e.message);
 				for(var i in mission.users){
@@ -230,7 +233,8 @@ io.sockets.on('connection', function(socket){
 							});
 						}
 					}
-				}else if(mission.isFinished()){
+				}
+				if(mission.isFinished()){
 					/* tell all user that this mission is finished */
 					for(var usrIdx in mission.users){
 						var usr = mission.users[usrIdx];
@@ -341,6 +345,25 @@ io.sockets.on('connection', function(socket){
 				mission.addToPending(to_user);
 			}else{
 				/* offline */
+			}
+		}
+	});
+
+	socket.on('clap', function(e){
+		if(!e  || !e.mission_id){
+			makingAMistake(socket, "invite");
+		}else{
+			var mission = missions[e.mission_id];
+			mission.clap(e.log_idx);
+			for(var idx in mission.users){
+				var sk = mission.users[idx].socket;
+				if(sk){
+					sk.emit('clap success', {
+						'log_idx': e.log_idx,
+						'clap_value' : mission.missionlog[e.log_idx].clap
+					});
+				}else{ // offline
+				}
 			}
 		}
 	})
