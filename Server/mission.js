@@ -15,6 +15,8 @@ function Mission(type,owner,minUsers,words){
 	this.minUsers = minUsers;
 	this.words = words;
 	this.numUsers = 0;
+	this.currentWordIdx = 0;
+	this.currentAnswered_currentWord = {};
 
 	this.started = false;
 
@@ -29,10 +31,12 @@ function Mission(type,owner,minUsers,words){
 		}
 		_self.users[usr.id] = usr;
 		_self.numUsers ++;
+		_self.currentAnswered_currentWord[usr.id] = 0;
 		return true;
 	}
 	this.removeUserById = function(id){
-		delete userRoom[id];
+		delete _self.currentAnswered_currentWord[id];
+		delete _self.users[id];
 	}
 	this.hasUser = function(id){
 		if(_self.users[id] != undefined) return true;
@@ -49,7 +53,7 @@ function Mission(type,owner,minUsers,words){
 			numUsers: _self.numUsers
 		}
 	}
-	this.getChatLog = function(){
+	this.getMissionlog = function(){
 		return this.missionlog;
 	}
 	/*
@@ -59,8 +63,8 @@ function Mission(type,owner,minUsers,words){
 		user_id
 		user_avatar
 	*/
-	this.addChatlog = function(msg){
-		_self.chatlog.push(msg);
+	this.addMissionlog = function(msg){
+		_self.missionlog.push(msg);
 	}
 
 	this.isStartable = function(){
@@ -76,6 +80,48 @@ function Mission(type,owner,minUsers,words){
 		}
 	}
 
-	console.log("defined");
+	this.getCurrentWord = function(){
+		return _self.words[_self.currentWordIdx];
+	}
+
+	this.nextWord = function(){
+		_self.currentAnswered_currentWord = {};
+		for(var i in _self.users){
+			_self.currentAnswered_currentWord[i] = 0;
+		}
+		_self.currentWordIdx ++;
+		return _self.getCurrentWord();
+	}
+
+	this.readyNextRound = function(){
+		var cdt = 1;
+		for(var i in _self.currentAnswered_currentWord){
+			if(_self.currentAnswered_currentWord[i] == 0){
+				cdt = 0;
+				break;
+			}
+		}
+		return cdt;
+	}
+
+	this.moveOn = function(id){
+		if(_self.currentAnswered_currentWord[id] <= 3){
+
+		}else{
+			_self.currentAnswered_currentWord[id] ++;
+		}
+		
+		if(_self.readyNextRound()){
+			_self.nextWord();
+		}
+	}
+
+	this.isFinished = function(){
+		if((_self.currentWordIdx == (_self.words.length-1)) && (_self.readyNextRound()){
+			return true;
+		}
+		return false;
+	}
+
 	return this;
 }
