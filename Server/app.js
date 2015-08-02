@@ -49,10 +49,10 @@ io.sockets.on('connection', function(socket){
 		if (!e || !e.id) {
 			makingAMistake(socket, "relogin");
 		} else {
-			//console.log(socket.id+" somebody reconnecting");somebod
+			console.log(socket.id+" somebody reconnecting");
 			if (users[e.id] != undefined) {
 				users[e.id].socket = socket;
-				// console.log("reconnected");
+				console.log("reconnected");
 			}
 		}
 	});
@@ -155,10 +155,10 @@ io.sockets.on('connection', function(socket){
 	});
 	
 	socket.on('chat', function(e){
-		if(!e || !e.mission_id || !e.user_id || !e.type || !e.message){
+		if(!e || !e.mission_id || !e.user_id || !e.type){
 			makingAMistake(socket, 'chat');
 		}else{
-			var mission = missions[e.room_id];
+			var mission = missions[e.mission_id];
 			var user_name = users[e.user_id].name;
 			var user_avatar = users[e.user_id].avatar;
 			var msg = {
@@ -169,11 +169,51 @@ io.sockets.on('connection', function(socket){
 				user_id : e.user_id,
 				user_avatar : user_avatar
 			};
-			mission.addChatlog(msg);
-			msg.mission_id = e.mission_id;
+			console.log('msg: '+e.message);
+			mission.addMissionlog(msg);
 			for (var i in mission.users) {
 				var s = mission.users[i].socket;
-				s.emit('chat', msg);
+				if(s){
+					msg.mission_id = e.mission_id;
+					s.emit('chat', msg);
+				}
+			}
+
+			if(e.type == 100){ /* this is an answer */
+				mission.moveOn(e.user_id);
+				for(var i in mission.users){
+					var usr = mission.users[i];
+					if(usr.socket){
+						usr.socket.emit('get current word success', {
+							word: mission.getCurrentWord(),
+							currentAnswered : mission.currentAnswered_currentWord,
+							numUsers: mission.numUsers
+						});
+					}else{
+						/* offline, do something! */
+					}
+				}
+				if(mission.readyNextRound()){
+					/* tell all user to move to the next round */
+					for(var usrIdx in mission.users){
+						var usr = mission.users[usrIdx];
+						if(usr.socket){
+							usr.socket.emit('push word', {
+								word: mission.getCurrentWord()
+							});
+						}
+					}
+				}else if(mission.isFinished()){
+					/* tell all user that this mission is finished */
+					for(var usrIdx in mission.users){
+						var usr = mission.users[usrIdx];
+						if(usr.socket){
+							usr.socket.emit('mission finished', {
+								words: mission.words
+							});
+						}
+					}
+				}
 			}
 		}
 	});
@@ -211,15 +251,32 @@ io.sockets.on('connection', function(socket){
 		});
 	});
 
-	socket.on('get misionlog', function(e){
+	socket.on('get missionlog', function(e){
+		console.log('socket.mission log');
 		if(!e || !e.mission_id){
 			makingAMistake(socket, "get missionlog")
+		}else{
+			console.log('get mission log');
+			var mission = missions[e.mission_id];
+			console.log("get missionlog: ",mission.getMissionlog());
+			socket.emit('get missionlog success', {
+				missionlog: mission.getMissionlog(),
+				metadata: mission.getMetaData()
+			});	
 		}
-		var mission = missions[e.mission_id];
-		socket.emit('get missionlog success', {
-			chatlog: mission.getChatLog(),
-			metadata: mission.getMetaData()
-		});
+	});
+
+	socket.on('get current word', function(e){ /* get the current word to pronounce */
+		if(!e || !e.mission_id){
+			makingAMistake(socket, "get word");
+		}else{
+			var mission = missions[e.mission_id];
+			socket.emit('get current word success', {
+				word: mission.getCurrentWord(),
+				currentAnswered : mission.currentAnswered_currentWord,
+				numUsers: mission.numUsers
+			});
+		}
 	});
 });
 
